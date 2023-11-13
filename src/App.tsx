@@ -1,6 +1,5 @@
-import { useState } from 'react'
-import './App.css'
-import Map from './World/map'
+import './App.css';
+import Map from './World/map';
 
 function App() {
   return (

@@ -1,0 +1,108 @@
+@font-face {
+    font-family: Mario World Pixel Colors;
+    src: url("./assets/elementos_juego/fuentes/marioWorldColor.ttf") format("opentype");
+}
+
+@font-face {
+    font-family: Mario World;
+    src: url("./assets/elementos_juego/fuentes/marioWorld.otf") format("opentype");
+}
+
+#root {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#contenedor {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    background-color: #372F56;
+    flex-wrap: wrap;
+    position: relative;
+}
+
+#mapa {
+    flex: 3;
+    display: flex;
+    min-height: 768px;
+}
+
+#puntuacion {
+    position: relative;
+    background-color: #221d35;
+    flex: 1;
+}
+
+#seccion-izquierda {
+    height: 100%;
+    width: 27.6%;
+    background-image: url('./assets/elementos_juego/fondo/izq.png');
+    background-size: contain;
+    background-repeat: no-repeat; 
+    max-width: 315px;
+    margin-right: -0.5%;
+}
+
+#seccion-centro{
+    width: 49.1%;
+    height: 100%;
+    background-image: url('./assets/elementos_juego/fondo/medi.png');
+    background-size: contain;
+    background-repeat: no-repeat; 
+    max-width: 568px;
+    margin-right: -0.5%;
+}
+
+#seccion-derecha {
+    width: 21.1%;
+    height: 100%;
+    background-image: url('./assets/elementos_juego/fondo/der.png');
+    background-size: contain;
+    background-repeat: no-repeat;    
+    max-width: 295px;
+}
+
+#seccion-medio {
+    margin-top: 19.1%;
+    padding-top: 95%; 
+    display: table;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#puntuacion h1{
+    font-family: Mario World Pixel Colors;
+    font-size: 2.5em;
+    margin-top: 25%;
+    margin-left: 15%;
+}
+
+#puntuacion h3{
+    font-family: Mario World;
+    font-size: 1.5em;
+    margin-top: 5%;
+    margin-left: 10%;
+}
+
+#turno {
+    color: #E2BC38;
+}
+
+
+
+@media (max-width: 600px) {
+    #contenedor {
+        flex-direction: column;
+    }
+
+    #mapa {
+        min-height: auto;
+    }
+
+    #mapa, #puntuacion {
+        flex: auto;
+    }
+}
