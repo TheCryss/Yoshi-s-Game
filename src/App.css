@@ -21,17 +21,17 @@
     height: 100vh;
     background-color: #372F56;
     flex-wrap: wrap;
-    position: relative;
 }
 
 #mapa {
     flex: 3;
     display: flex;
-    min-height: 768px;
+    min-height: 100%;
 }
 
 #puntuacion {
     position: relative;
+    height: 100%;
     background-color: #221d35;
     flex: 1;
 }
@@ -73,18 +73,23 @@
     border-collapse: collapse;
 }
 
+.mx{
+    margin-right: 10%;
+    margin-left: 10%;
+}
+
 #puntuacion h1{
     font-family: Mario World Pixel Colors;
     font-size: 2.5em;
     margin-top: 25%;
-    margin-left: 15%;
+
 }
 
 #puntuacion h3{
     font-family: Mario World;
     font-size: 1.5em;
     margin-top: 5%;
-    margin-left: 10%;
+
 }
 
 #turno {

@@ -126,14 +126,14 @@ function Map() {
           </div>
           <div id="seccion-derecha"></div>
         </div>
-        <div id="puntuacion">
-          <h1>"Yoshi's Battle"</h1>
+        <div id="puntuacion" className=''>
+          <h1 className='mx'>"Yoshi's Battle"</h1>
           <br></br>
           <br></br>
-          <h3 id='turno'>Turno de: Verde</h3>
+          <h3 id='turno' className='mx'>Turno de: Verde</h3>
           <br></br>
-          <h3 id='rojo'>Puntuacion Rojo: 0</h3>
-          <h3 id='verde'>Puntuacion Verde: 0</h3>
+          <h3 id='rojo' className='mx'>Puntuacion Rojo: 0</h3>
+          <h3 id='verde' className='mx'>Puntuacion Verde: 0</h3>
         </div>
       </div>
     </>
