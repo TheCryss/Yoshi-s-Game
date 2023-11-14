@@ -1,4 +1,7 @@
 import { useEffect } from 'react';
+type cordinate = [number, number];
+type cordinates = cordinate[]
+type matrix = number[][];
 
 function Map() {
   // let matriz_juego = [[1,1,0,0,0,0,1,1], [1,0,0,0,0,0,0,1], [0,0,0,0,0,0,0,0], [0,0,0,2,2,0,0,0], [0,0,0,2,2,0,0,0], 
@@ -6,7 +9,7 @@ function Map() {
 
   let matrizCreada = false;
 
-  function buscarEnLista(lista: any[], elemento: any) {
+  function buscarEnLista(lista: cordinates, elemento: cordinate) {
     for(let i = 0; i < lista.length; i++){
       if(lista[i][0] === elemento[0] && lista[i][1] === elemento[1]){
         return true;
@@ -15,7 +18,7 @@ function Map() {
     return false;
   }
 
-  function buscarEnFila(lista: any[], elemento: any) {
+  function buscarEnFila(lista: cordinates, elemento:cordinate) {
     for(let i = 0; i < lista.length; i++){
       if(lista[i][0] === elemento[0]){
         return true;
@@ -24,11 +27,11 @@ function Map() {
     return false;
   }
 
-  let matriz_juego = Array(8).fill(0).map(() => Array(8).fill(0));
-  let posicionMonedasNormales = [[0,0], [0,7], [7,0], [7,7], [1,0], [0,1], [1,7], [7,1], [6,0], [0,6], [6,7], [7,6]];
-  let posicionMonedasEspeciales = [[3,3], [3,4], [4,3], [4,4]];
-  let posicionesDisponibles: any[] = [];
-  let posicionJugadores: any[] = [];
+  let matriz_juego: matrix = Array(8).fill(0).map(() => Array(8).fill(0));
+  let posicionMonedasNormales: cordinates = [[0,0], [0,7], [7,0], [7,7], [1,0], [0,1], [1,7], [7,1], [6,0], [0,6], [6,7], [7,6]];
+  let posicionMonedasEspeciales: cordinates = [[3,3], [3,4], [4,3], [4,4]];
+  let posicionesDisponibles: cordinates = [];
+  let posicionJugadores: cordinates = [];
   function generarMatriz() {
     for(let i = 0; i < 8; i++){
       for(let j = 0; j < 8; j++){
