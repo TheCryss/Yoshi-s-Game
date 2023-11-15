@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { cordinate, matrix, cordinates } from '../Interfaces/interfaces';
 import { Nodo } from '../scripts/classes';
-import { posibleMoviento } from '../scripts/minimax';
+import { posibleMoviento,utilidadMovimiento } from '../scripts/minimax';
 
 function Map() {
   // let matriz_juego = [[1,1,0,0,0,0,1,1], [1,0,0,0,0,0,0,1], [0,0,0,0,0,0,0,0], [0,0,0,2,2,0,0,0], [0,0,0,2,2,0,0,0], 
@@ -112,7 +112,6 @@ function Map() {
             image.setAttribute('height', 'auto');
             div.appendChild(image);
           }
-
           div.setAttribute('id', `cell ${i}-${j}`);
           row.appendChild(div);
         }
@@ -125,6 +124,7 @@ function Map() {
       let miNodo = new Nodo(null, posicionJugadores, 0, 0, posicionMonedasNormales, 'max', 0);
       console.log(miNodo.getPosicionIA());
       console.log(posibleMoviento(miNodo.getPosicionIA()));
+      
 
     }
   }, [matriz_juego]);
