@@ -6,15 +6,17 @@ export class Nodo implements NodoInterface {
     profundidad: number;
     heuristica: number;
     posiciones_monedas: cordinates;
+    posiciones_monedas_especiales: cordinates;
     tipo: string;
     utilidad: number;   
 
-    constructor(padre:Nodo | null, posicion:cordinates, profundidad:number, heuristica:number, posiciones_monedas:cordinates, tipo:string, utilidad:number) {
+    constructor(padre:Nodo | null, posicion:cordinates, profundidad:number, heuristica:number, posiciones_monedas:cordinates,posiciones_monedas_especiales:cordinates, tipo:string, utilidad:number) {
         this.padre = padre;
         this.posicion = posicion;
         this.profundidad = profundidad;
         this.heuristica = heuristica;
         this.posiciones_monedas = posiciones_monedas;
+        this.posiciones_monedas_especiales = posiciones_monedas_especiales;
         this.tipo = tipo;
         this.utilidad = utilidad;
     }
@@ -23,8 +25,13 @@ export class Nodo implements NodoInterface {
         return this.padre;
     }
 
-    getPosicion(): cordinates {
-        return this.posicion;
+    getPosicion(tipo:String): cordinate {
+        if(tipo == "MAX"){
+            return this.posicion[1];
+        }else{
+            return this.posicion[0];
+
+        }
     }
 
     getProfundidad(): number {
@@ -39,6 +46,10 @@ export class Nodo implements NodoInterface {
         return this.posiciones_monedas;
     }
 
+    getPosicionesMonedasEspeciales(): cordinates {
+        return this.posiciones_monedas_especiales;
+    }
+
     getTipo(): string {
         return this.tipo;
     }
@@ -51,11 +62,6 @@ export class Nodo implements NodoInterface {
         this.utilidad = utilidad;
     }
 
-    getPosicionIA(): cordinate {
-        return this.posicion[1];
-    }
-    
-    getPosicionPJ(): cordinate {
-        return this.posicion[0];
-    }
+
+
 }

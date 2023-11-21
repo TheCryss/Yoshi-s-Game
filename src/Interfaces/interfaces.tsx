@@ -4,6 +4,7 @@ export interface Nodo{
     profundidad: number;
     heuristica: number;
     posiciones_monedas: cordinates;
+    posiciones_monedas_especiales: cordinates;
     tipo: string;
     utilidad: number;
 

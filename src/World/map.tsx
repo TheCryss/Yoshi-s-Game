@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { cordinate, matrix, cordinates } from '../Interfaces/interfaces';
 import { Nodo } from '../scripts/classes';
-import { posibleMoviento,utilidadMovimiento } from '../scripts/minimax';
+import { minimax, posibleMoviento,utilidadMovimiento } from '../scripts/minimax';
 
 function Map() {
   // let matriz_juego = [[1,1,0,0,0,0,1,1], [1,0,0,0,0,0,0,1], [0,0,0,0,0,0,0,0], [0,0,0,2,2,0,0,0], [0,0,0,2,2,0,0,0], 
@@ -121,12 +121,13 @@ function Map() {
 
   useEffect(() => {
     if (matrizCreada) {
-      let miNodo = new Nodo(null, posicionJugadores, 0, 0, posicionMonedasNormales, 'max', 0);
-      console.log(miNodo.getPosicionIA());
-      console.log(posibleMoviento(miNodo.getPosicionIA()));
+      let miNodo = new Nodo(null, posicionJugadores, 0, 0, posicionMonedasNormales,posicionMonedasEspeciales, 'MAX', 0);
+      // console.log(miNodo.getPosicionIA());
+      // console.log(posibleMoviento(miNodo.getPosicionIA()));
+      console.log(minimax(matriz_juego,posicionMonedasNormales,posicionMonedasEspeciales,posicionesDisponibles,posicionJugadores));
       
 
-    }
+    } 
   }, [matriz_juego]);
 
   return (

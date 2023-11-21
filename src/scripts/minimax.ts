@@ -1,4 +1,4 @@
-import { cordinate, cordinates } from "../Interfaces/interfaces";
+import { cordinate, cordinates, matrix } from "../Interfaces/interfaces";
 import { Nodo } from "./classes";
 import * as Collections from 'typescript-collections';
 
@@ -61,3 +61,43 @@ export function ganador(n_puntosIA: number, n_puntosJugador: number): number {
     } 
 }
 
+export function minimax(matrix:matrix,p_monedas:cordinates, p_monedas_especiales:cordinates, p_disponibles:cordinates, p_jugadores:cordinates){
+    let NodoRaiz = new Nodo(null,p_jugadores,0,0,p_monedas, p_monedas_especiales, "MAX", 0);
+    let cola = new Collections.Stack<Nodo>();
+    let profundidad = 0;
+    cola.push(NodoRaiz);
+    console.log("can i have a cola");
+    console.log("but it was no cola it was cock");
+    let i = 0
+    // let nodoActual = cola.pop()
+    // console.log(nodoActual);
+    while (i<2) 
+    {
+        let nodoActual = cola.pop()
+        console.log(nodoActual);
+        
+        profundidad++
+        if (nodoActual?.tipo == "MAX") {
+            let movimientos = posibleMoviento(nodoActual.getPosicion("MAX"))
+            for(let movimiento of movimientos){
+                let utilidad = utilidadMovimiento(movimiento,p_monedas,p_monedas_especiales)
+                cola.push(new Nodo(nodoActual,[nodoActual.getPosicion("MIN"),movimiento],profundidad,0,p_monedas,p_monedas_especiales,"MIN",utilidad))
+            }
+        } else if(nodoActual?.tipo == "MIN"){
+            let movimientos = posibleMoviento(nodoActual?.getPosicion("MIN"))
+            for(let movimiento of movimientos){
+                let utilidad = utilidadMovimiento(movimiento,p_monedas,p_monedas_especiales)
+                cola.push(new Nodo(nodoActual,[movimiento,nodoActual.getPosicion("MAX")],profundidad,0,p_monedas,p_monedas_especiales,"MAX",utilidad))
+            }
+        }
+
+        i++;
+    }    
+/*     console.log(cola.size());
+    while(!cola.isEmpty()){
+        console.log(cola.pop());
+    } */
+    console.log(cola.size());
+    
+    
+}
