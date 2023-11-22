@@ -9,9 +9,11 @@ export class Nodo implements NodoInterface {
     posiciones_monedas_especiales: cordinates;
     tipo: string;
     utilidad: number;   
-    puntuacion: number;
+    p_Jugador:number;
+    p_IA:number;
+    mejor_mov: cordinate | null;
 
-    constructor(padre:Nodo | null, posicion:cordinates, profundidad:number, heuristica:number, posiciones_monedas:cordinates,posiciones_monedas_especiales:cordinates, tipo:string, utilidad:number,puntuacion:number) {
+    constructor(padre:Nodo | null, posicion:cordinates, profundidad:number, heuristica:number, posiciones_monedas:cordinates,posiciones_monedas_especiales:cordinates, tipo:string, utilidad:number,p_Jugador:number = 0,p_IA:number =0) {
         this.padre = padre;
         this.posicion = posicion;
         this.profundidad = profundidad;
@@ -20,11 +22,17 @@ export class Nodo implements NodoInterface {
         this.posiciones_monedas_especiales = posiciones_monedas_especiales;
         this.tipo = tipo;
         this.utilidad = utilidad;
-        this.puntuacion = puntuacion;
+        this.p_Jugador = p_Jugador;
+        this.p_IA = p_IA;
+        this.mejor_mov = null;
     }
 
     getPadre(): Nodo | null {
         return this.padre;
+    }
+
+    setMejorMov(movimiento: cordinate): void {
+        this.mejor_mov = movimiento;
     }
 
     getPosicion(tipo:String): cordinate {

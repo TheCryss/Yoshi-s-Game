@@ -28,13 +28,13 @@ export function posibleMoviento(pos: cordinate): cordinates {
 
 export function utilidadMovimiento(movimiento: cordinate, p_monedas: cordinates, p_monedas_especiales: cordinates): number {
     let utilidad: number = 0;
-    for (let i = 0; i < p_monedas.length; i++) {        
+    for (let i = 0; i < p_monedas.length; i++) {
         if (movimiento[0] === p_monedas[i][0] && movimiento[1] === p_monedas[i][1]) {
             utilidad = 1;
         }
     }
-    for (let i = 0; i < p_monedas_especiales.length; i++) {        
-        if (movimiento[0] === p_monedas_especiales[i][0] && movimiento[1] === p_monedas_especiales[i][1]) {            
+    for (let i = 0; i < p_monedas_especiales.length; i++) {
+        if (movimiento[0] === p_monedas_especiales[i][0] && movimiento[1] === p_monedas_especiales[i][1]) {
             utilidad = 3;
         }
     }
@@ -63,41 +63,82 @@ export function ganador(n_puntosIA: number, n_puntosJugador: number): number {
 
 export function minimax(matrix: matrix, p_monedas: cordinates, p_monedas_especiales: cordinates, p_disponibles: cordinates, p_jugadores: cordinates) {
 
-    function crearArbol() {
-        let NodoRaiz = new Nodo(null, p_jugadores, 0, 0, p_monedas, p_monedas_especiales, "MAX", -Infinity,0);
+    function crearArbol()  {
+        let NodoRaiz = new Nodo(null, p_jugadores, 0, 0, p_monedas, p_monedas_especiales, "MAX", -Infinity, 0);
+        console.log(NodoRaiz);
         let pila = new Collections.Stack<Nodo>();
         let cola = new Collections.Queue<Nodo>();
         let profundidad = 0;
         pila.push(NodoRaiz);
-        let i = 1;
-        let dificultad=2;
-        while (i <= dificultad) {
+        let dificultad = 2; //Cambiar esto para cambiar la dificultad/profundidad del arbol
+        while (profundidad < dificultad) {
             profundidad++
             while (!pila.isEmpty()) {
                 let nodoActual = pila.pop()
-                console.log(nodoActual);
                 if (nodoActual?.tipo == "MAX") {
                     let movimientos = posibleMoviento(nodoActual.getPosicion("MAX"))
                     for (let movimiento of movimientos) {
-                        let puntuacion = utilidadMovimiento(movimiento,p_monedas,p_monedas_especiales)   
-                        
-                        cola.enqueue(new Nodo(nodoActual, [nodoActual.getPosicion("MIN"), movimiento], profundidad, 0, p_monedas, p_monedas_especiales, "MIN", Infinity,puntuacion))
+                        let puntuacion = utilidadMovimiento(movimiento, p_monedas, p_monedas_especiales) + (nodoActual.padre?.p_IA ?? 0)
+                        if (profundidad == dificultad) {
+                            let utilidad = heuristica(nodoActual.p_IA + puntuacion, nodoActual.p_Jugador)
+                            cola.enqueue(new Nodo(nodoActual, [nodoActual.getPosicion("MIN"), movimiento], profundidad, 0, p_monedas, p_monedas_especiales, "MIN", utilidad, nodoActual.p_Jugador, puntuacion))
+                        } else {
+                            cola.enqueue(new Nodo(nodoActual, [nodoActual.getPosicion("MIN"), movimiento], profundidad, 0, p_monedas, p_monedas_especiales, "MIN", Infinity, nodoActual.p_Jugador, puntuacion))
+                        }
                     }
                 } else if (nodoActual?.tipo == "MIN") {
                     let movimientos = posibleMoviento(nodoActual?.getPosicion("MIN"))
                     for (let movimiento of movimientos) {
-                        let puntuacion = utilidadMovimiento(movimiento,p_monedas,p_monedas_especiales)
-                        cola.enqueue(new Nodo(nodoActual, [movimiento, nodoActual.getPosicion("MAX")], profundidad, 0, p_monedas, p_monedas_especiales, "MAX", -Infinity,puntuacion))
+                        let puntuacion = utilidadMovimiento(movimiento, p_monedas, p_monedas_especiales) + (nodoActual.padre?.p_Jugador ?? 0)
+                        if (profundidad == dificultad) {
+                            let utilidad = heuristica(nodoActual.p_IA, nodoActual.p_Jugador + puntuacion)
+                            cola.enqueue(new Nodo(nodoActual, [movimiento, nodoActual.getPosicion("MAX")], profundidad, 0, p_monedas, p_monedas_especiales, "MAX", utilidad, puntuacion, nodoActual.p_IA))
+                        } else {
+                            cola.enqueue(new Nodo(nodoActual, [movimiento, nodoActual.getPosicion("MAX")], profundidad, 0, p_monedas, p_monedas_especiales, "MAX", -Infinity, puntuacion, nodoActual.p_IA))
+
+                        }
                     }
                 }
             }
             while (!cola.isEmpty()) {
-                pila.push(cola.dequeue() as Nodo)
+                let nodo = cola.dequeue()
+                pila.push(nodo as Nodo)
             }
-            i++;
         }
-        
         console.log(pila.size());
+
+        function calcularUtilidad() {
+            while (!pila.isEmpty()) {
+                let nodo = pila.pop();
+                let nodoPadre = nodo?.getPadre();
+                pila.add(nodoPadre as Nodo);
+
+                if (nodoPadre && nodo) {
+                    if (nodoPadre?.getTipo() == "MAX" ) {
+                        // console.log(nodoPadre.getUtilidad() , nodo.getUtilidad());
+                        
+                        if (nodoPadre.getUtilidad() < nodo.getUtilidad()) {
+                            if (nodoPadre.getProfundidad() == 0) {
+                                nodoPadre.setMejorMov(nodo.getPosicion("MAX"));
+                            }
+                            nodoPadre.setUtilidad(nodo.getUtilidad());
+                            
+                        }
+                    } else {
+                        if (nodoPadre.getUtilidad() > nodo.getUtilidad()) {
+                            nodoPadre.setUtilidad(nodo.getUtilidad());
+                        }
+                    }
+                }
+
+            }
+            console.log(NodoRaiz);
+        }
+        calcularUtilidad();
+        return NodoRaiz.mejor_mov;
     }
-    crearArbol();   
+    let best_mov =crearArbol();
+    console.log(best_mov);
+    return best_mov;
+    
 }
