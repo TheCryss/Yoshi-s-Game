@@ -9,8 +9,9 @@ export class Nodo implements NodoInterface {
     posiciones_monedas_especiales: cordinates;
     tipo: string;
     utilidad: number;   
+    puntuacion: number;
 
-    constructor(padre:Nodo | null, posicion:cordinates, profundidad:number, heuristica:number, posiciones_monedas:cordinates,posiciones_monedas_especiales:cordinates, tipo:string, utilidad:number) {
+    constructor(padre:Nodo | null, posicion:cordinates, profundidad:number, heuristica:number, posiciones_monedas:cordinates,posiciones_monedas_especiales:cordinates, tipo:string, utilidad:number,puntuacion:number) {
         this.padre = padre;
         this.posicion = posicion;
         this.profundidad = profundidad;
@@ -19,6 +20,7 @@ export class Nodo implements NodoInterface {
         this.posiciones_monedas_especiales = posiciones_monedas_especiales;
         this.tipo = tipo;
         this.utilidad = utilidad;
+        this.puntuacion = puntuacion;
     }
 
     getPadre(): Nodo | null {

@@ -28,13 +28,13 @@ export function posibleMoviento(pos: cordinate): cordinates {
 
 export function utilidadMovimiento(movimiento: cordinate, p_monedas: cordinates, p_monedas_especiales: cordinates): number {
     let utilidad: number = 0;
-    for (let i = 0; i < p_monedas.length; i++) {
-        if (movimiento == p_monedas[i]) {
+    for (let i = 0; i < p_monedas.length; i++) {        
+        if (movimiento[0] === p_monedas[i][0] && movimiento[1] === p_monedas[i][1]) {
             utilidad = 1;
         }
     }
-    for(let i=0; i<p_monedas_especiales.length; i++){
-        if(movimiento == p_monedas_especiales[i]){
+    for (let i = 0; i < p_monedas_especiales.length; i++) {        
+        if (movimiento[0] === p_monedas_especiales[i][0] && movimiento[1] === p_monedas_especiales[i][1]) {            
             utilidad = 3;
         }
     }
@@ -56,48 +56,48 @@ export function terminar(n_puntosIA: number, n_puntosJugador: number): boolean {
 export function ganador(n_puntosIA: number, n_puntosJugador: number): number {
     if (n_puntosIA > n_puntosJugador) {
         return 3;
-    } else{
+    } else {
         return 4;
-    } 
+    }
 }
 
-export function minimax(matrix:matrix,p_monedas:cordinates, p_monedas_especiales:cordinates, p_disponibles:cordinates, p_jugadores:cordinates){
-    let NodoRaiz = new Nodo(null,p_jugadores,0,0,p_monedas, p_monedas_especiales, "MAX", 0);
-    let cola = new Collections.Stack<Nodo>();
-    let profundidad = 0;
-    cola.push(NodoRaiz);
-    console.log("can i have a cola");
-    console.log("but it was no cola it was cock");
-    let i = 0
-    // let nodoActual = cola.pop()
-    // console.log(nodoActual);
-    while (i<2) 
-    {
-        let nodoActual = cola.pop()
-        console.log(nodoActual);
-        
-        profundidad++
-        if (nodoActual?.tipo == "MAX") {
-            let movimientos = posibleMoviento(nodoActual.getPosicion("MAX"))
-            for(let movimiento of movimientos){
-                let utilidad = utilidadMovimiento(movimiento,p_monedas,p_monedas_especiales)
-                cola.push(new Nodo(nodoActual,[nodoActual.getPosicion("MIN"),movimiento],profundidad,0,p_monedas,p_monedas_especiales,"MIN",utilidad))
-            }
-        } else if(nodoActual?.tipo == "MIN"){
-            let movimientos = posibleMoviento(nodoActual?.getPosicion("MIN"))
-            for(let movimiento of movimientos){
-                let utilidad = utilidadMovimiento(movimiento,p_monedas,p_monedas_especiales)
-                cola.push(new Nodo(nodoActual,[movimiento,nodoActual.getPosicion("MAX")],profundidad,0,p_monedas,p_monedas_especiales,"MAX",utilidad))
-            }
-        }
+export function minimax(matrix: matrix, p_monedas: cordinates, p_monedas_especiales: cordinates, p_disponibles: cordinates, p_jugadores: cordinates) {
 
-        i++;
-    }    
-/*     console.log(cola.size());
-    while(!cola.isEmpty()){
-        console.log(cola.pop());
-    } */
-    console.log(cola.size());
-    
-    
+    function crearArbol() {
+        let NodoRaiz = new Nodo(null, p_jugadores, 0, 0, p_monedas, p_monedas_especiales, "MAX", -Infinity,0);
+        let pila = new Collections.Stack<Nodo>();
+        let cola = new Collections.Queue<Nodo>();
+        let profundidad = 0;
+        pila.push(NodoRaiz);
+        let i = 1;
+        let dificultad=2;
+        while (i <= dificultad) {
+            profundidad++
+            while (!pila.isEmpty()) {
+                let nodoActual = pila.pop()
+                console.log(nodoActual);
+                if (nodoActual?.tipo == "MAX") {
+                    let movimientos = posibleMoviento(nodoActual.getPosicion("MAX"))
+                    for (let movimiento of movimientos) {
+                        let puntuacion = utilidadMovimiento(movimiento,p_monedas,p_monedas_especiales)   
+                        
+                        cola.enqueue(new Nodo(nodoActual, [nodoActual.getPosicion("MIN"), movimiento], profundidad, 0, p_monedas, p_monedas_especiales, "MIN", Infinity,puntuacion))
+                    }
+                } else if (nodoActual?.tipo == "MIN") {
+                    let movimientos = posibleMoviento(nodoActual?.getPosicion("MIN"))
+                    for (let movimiento of movimientos) {
+                        let puntuacion = utilidadMovimiento(movimiento,p_monedas,p_monedas_especiales)
+                        cola.enqueue(new Nodo(nodoActual, [movimiento, nodoActual.getPosicion("MAX")], profundidad, 0, p_monedas, p_monedas_especiales, "MAX", -Infinity,puntuacion))
+                    }
+                }
+            }
+            while (!cola.isEmpty()) {
+                pila.push(cola.dequeue() as Nodo)
+            }
+            i++;
+        }
+        
+        console.log(pila.size());
+    }
+    crearArbol();   
 }

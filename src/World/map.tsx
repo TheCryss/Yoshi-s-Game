@@ -56,7 +56,12 @@ function Map() {
     }
     console.log(matriz_juego);
     matrizCreada = true;
-  }
+    //------------------------Prueba Minimax------------------------
+    let miNodo = new Nodo(null, posicionJugadores, 0, 0, posicionMonedasNormales,posicionMonedasEspeciales, 'MAX', -Infinity);
+    // console.log(miNodo.getPosicionIA());
+    console.log(posibleMoviento(miNodo.getPosicion("MAX")));
+    minimax(matriz_juego,posicionMonedasNormales,posicionMonedasEspeciales,posicionesDisponibles,posicionJugadores)
+    }
 
 
   useEffect(() => {
@@ -119,16 +124,6 @@ function Map() {
     }
   }, []);
 
-  useEffect(() => {
-    if (matrizCreada) {
-      let miNodo = new Nodo(null, posicionJugadores, 0, 0, posicionMonedasNormales,posicionMonedasEspeciales, 'MAX', 0);
-      // console.log(miNodo.getPosicionIA());
-      // console.log(posibleMoviento(miNodo.getPosicionIA()));
-      console.log(minimax(matriz_juego,posicionMonedasNormales,posicionMonedasEspeciales,posicionesDisponibles,posicionJugadores));
-      
-
-    } 
-  }, [matriz_juego]);
 
   return (
     <>
