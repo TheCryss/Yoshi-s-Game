@@ -1,19 +1,19 @@
-import { Nodo as NodoInterface , cordinate_exp, matrix, cordinate,cordinates} from "../Interfaces/interfaces";
+import { Nodo as NodoInterface, coordinate, coordinates} from "../Interfaces/interfaces";
 
 export class Nodo implements NodoInterface {
     padre: Nodo | null;
-    posicion: cordinates;
+    posicion: coordinates;
     profundidad: number;
     heuristica: number;
-    posiciones_monedas: cordinates;
-    posiciones_monedas_especiales: cordinates;
+    posiciones_monedas: coordinates;
+    posiciones_monedas_especiales: coordinates;
     tipo: string;
     utilidad: number;   
     p_Jugador:number;
     p_IA:number;
-    mejor_mov: cordinate | null;
+    mejor_mov: coordinate | null;
 
-    constructor(padre:Nodo | null, posicion:cordinates, profundidad:number, heuristica:number, posiciones_monedas:cordinates,posiciones_monedas_especiales:cordinates, tipo:string, utilidad:number,p_Jugador:number = 0,p_IA:number =0) {
+    constructor(padre:Nodo | null, posicion:coordinates, profundidad:number, heuristica:number, posiciones_monedas:coordinates,posiciones_monedas_especiales:coordinates, tipo:string, utilidad:number,p_Jugador:number = 0,p_IA:number =0) {
         this.padre = padre;
         this.posicion = posicion;
         this.profundidad = profundidad;
@@ -31,11 +31,11 @@ export class Nodo implements NodoInterface {
         return this.padre;
     }
 
-    setMejorMov(movimiento: cordinate): void {
+    setMejorMov(movimiento: coordinate): void {
         this.mejor_mov = movimiento;
     }
 
-    getPosicion(tipo:String): cordinate {
+    getPosicion(tipo:String): coordinate {
         if(tipo == "MAX"){
             return this.posicion[1];
         }else{
@@ -52,11 +52,11 @@ export class Nodo implements NodoInterface {
         return this.heuristica;
     }
 
-    getPosicionesMonedas(): cordinates {
+    getPosicionesMonedas(): coordinates {
         return this.posiciones_monedas;
     }
 
-    getPosicionesMonedasEspeciales(): cordinates {
+    getPosicionesMonedasEspeciales(): coordinates {
         return this.posiciones_monedas_especiales;
     }
 
@@ -71,7 +71,4 @@ export class Nodo implements NodoInterface {
     setUtilidad(utilidad: number): void {
         this.utilidad = utilidad;
     }
-
-
-
 }

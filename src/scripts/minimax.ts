@@ -61,7 +61,8 @@ export function obtenerDificultad(dificultad:string): number {
 }
 
 export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especiales: coordinates, p_disponibles: coordinates, p_jugadores: coordinates, dificultad_juego: string = "Facil") {
-
+    matrix = matrix.slice();
+    p_disponibles = p_disponibles.slice();
     function crearArbol() {
         let NodoRaiz = new Nodo(null, p_jugadores, 0, 0, p_monedas, p_monedas_especiales, "MAX", -Infinity, 0);
         let pila = new Collections.Stack<Nodo>();

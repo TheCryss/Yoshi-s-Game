@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { coordinate, matrix, coordinates } from '../Interfaces/interfaces';
-import { Nodo } from '../scripts/classes';
-import { minimax, posibleMoviento } from '../scripts/minimax';
+import { minimax } from '../scripts/minimax';
 
 interface MapaProps {
   difficulty: 'Facil' | 'Intermedio' | 'Dificil' | undefined;
