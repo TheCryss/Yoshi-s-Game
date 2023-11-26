@@ -1,37 +1,28 @@
 import { useEffect } from 'react';
-import { cordinate, matrix, cordinates } from '../Interfaces/interfaces';
+import { coordinate, matrix, coordinates } from '../Interfaces/interfaces';
 import { Nodo } from '../scripts/classes';
-import { minimax, posibleMoviento,utilidadMovimiento } from '../scripts/minimax';
+import { minimax, posibleMoviento } from '../scripts/minimax';
 
-function Map() {
-  // let matriz_juego = [[1,1,0,0,0,0,1,1], [1,0,0,0,0,0,0,1], [0,0,0,0,0,0,0,0], [0,0,0,2,2,0,0,0], [0,0,0,2,2,0,0,0], 
-  //                   [0,0,0,0,0,0,0,0], [1,0,0,0,0,0,0,1], [1,1,0,0,0,0,1,1]];
+interface MapaProps {
+  difficulty: 'Facil' | 'Intermedio' | 'Dificil' | undefined;
+}
 
-  let matrizCreada = false;
+const Map: React.FC<MapaProps> = ({ difficulty }) => {
+  let matrizYaFueCreada = false;
 
-  function buscarEnLista(lista: cordinates, elemento: cordinate) {
-    for (let i = 0; i < lista.length; i++) {
-      if (lista[i][0] === elemento[0] && lista[i][1] === elemento[1]) {
-        return true;
-      }
-    }
-    return false;
+  function buscarEnLista(lista: coordinates, elemento: coordinate) {
+    return lista.some((e) => e[0] === elemento[0] && e[1] === elemento[1]);
   }
 
-  function buscarEnFila(lista: cordinates, elemento: cordinate) {
-    for (let i = 0; i < lista.length; i++) {
-      if (lista[i][0] === elemento[0]) {
-        return true;
-      }
-    }
-    return false;
+  function buscarEnFila(lista: coordinates, elemento: coordinate) {
+    return lista.some((e) => e[0] === elemento[0]);
   }
 
   let matriz_juego: matrix = Array(8).fill(0).map(() => Array(8).fill(0));
-  let posicionMonedasNormales: cordinates = [[0, 0], [0, 7], [7, 0], [7, 7], [1, 0], [0, 1], [1, 7], [7, 1], [6, 0], [0, 6], [6, 7], [7, 6]];
-  let posicionMonedasEspeciales: cordinates = [[3, 3], [3, 4], [4, 3], [4, 4]];
-  let posicionesDisponibles: cordinates = [];
-  let posicionJugadores: cordinates = [];
+  let posicionMonedasNormales: coordinates = [[0, 0], [0, 7], [7, 0], [7, 7], [1, 0], [0, 1], [1, 7], [7, 1], [6, 0], [0, 6], [6, 7], [7, 6]];
+  let posicionMonedasEspeciales: coordinates = [[3, 3], [3, 4], [4, 3], [4, 4]];
+  let posicionesDisponibles: coordinates = [];
+  let posicionJugadores: coordinates = [];
   function generarMatriz() {
     for (let i = 0; i < 8; i++) {
       for (let j = 0; j < 8; j++) {
@@ -54,18 +45,14 @@ function Map() {
       posicionJugadores.push(randomPosition);
       posicionesDisponibles.splice(randomIndex, 1);
     }
-    console.log(matriz_juego);
-    matrizCreada = true;
+    matrizYaFueCreada = true;
     //------------------------Prueba Minimax------------------------
-    let miNodo = new Nodo(null, posicionJugadores, 0, 0, posicionMonedasNormales,posicionMonedasEspeciales, 'MAX', -Infinity);
-    // console.log(miNodo.getPosicionIA());
-    console.log(posibleMoviento(miNodo.getPosicion("MAX")));
-    minimax(matriz_juego,posicionMonedasNormales,posicionMonedasEspeciales,posicionesDisponibles,posicionJugadores)
-    }
+    minimax(matriz_juego, posicionMonedasNormales, posicionMonedasEspeciales, posicionesDisponibles, posicionJugadores, difficulty)
+  }
 
 
   useEffect(() => {
-    if (!matrizCreada) {
+    if (!matrizYaFueCreada) {
       generarMatriz();
     }
     const container = document.getElementById('seccion-medio');
@@ -136,13 +123,14 @@ function Map() {
           <div id="seccion-derecha"></div>
         </div>
         <div id="puntuacion" className=''>
-          <h1 className='mx'>"Yoshi's Battle"</h1>
+          <h3 id='dificultad'>{difficulty?.toUpperCase()}</h3>
           <br></br>
           <br></br>
-          <h3 id='turno' className='mx'>Turno de: Verde</h3>
+          <h3 id='turno'>turno de: verde</h3>
           <br></br>
-          <h3 id='rojo' className='mx'>Puntuacion Rojo: 0</h3>
-          <h3 id='verde' className='mx'>Puntuacion Verde: 0</h3>
+          <h3 id='rojo'>rojo: 0</h3>
+          <h3 id='verde'>verde: 0</h3>
+          <button id='exit' onClick={() => window.location.reload()}>salir</button>   
         </div>
       </div>
     </>

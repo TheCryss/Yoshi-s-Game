@@ -1,24 +1,24 @@
 export interface Nodo{
     padre: Nodo | null;
-    posicion: cordinates;
+    posicion: coordinates;
     profundidad: number;
     heuristica: number;
-    posiciones_monedas: cordinates;
-    posiciones_monedas_especiales: cordinates;
+    posiciones_monedas: coordinates;
+    posiciones_monedas_especiales: coordinates;
     tipo: string;
     utilidad: number;
 
-    // getPosicion(): cordinates;
+    // getPosicion(): coordinates;
     // getProfundidad(): number;
     // getHeuristica(): number;
-    // getPosicionesMonedas(): cordinates;
+    // getPosicionesMonedas(): coordinates;
     // getTipo(): string;
     // getPadre(): Nodo | null;
     // getUtilidad(): number;
 
     // setUtilidad(utilidad: number): void;
 }
-export type cordinate_exp = {x_pos: number, y_pos: number};
-export type cordinate = [number, number];
-export type cordinates = cordinate[]
+export type coordinate_exp = {x_pos: number, y_pos: number};
+export type coordinate = [number, number];
+export type coordinates = coordinate[]
 export type matrix = number[][];

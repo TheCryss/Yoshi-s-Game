@@ -8,11 +8,17 @@
     src: url("./assets/elementos_juego/fuentes/marioWorld.otf") format("opentype");
 }
 
+@font-face {
+    font-family: Mario World Outlined;
+    src: url("./assets/elementos_juego/fuentes/outlined.ttf") format("opentype");
+}
+
 #root {
     margin: 0;
     padding: 0;
     width: 100%;
     height: 100%;
+    overflow: hidden;
 }
 
 #contenedor {
@@ -21,12 +27,13 @@
     height: 100vh;
     background-color: #372F56;
     flex-wrap: wrap;
+    position: relative;
+    justify-content: flex-start
 }
 
 #mapa {
     flex: 3;
     display: flex;
-    min-height: 100%;
 }
 
 #puntuacion {
@@ -34,69 +41,133 @@
     height: 100%;
     background-color: #221d35;
     flex: 1;
+    text-align: center;
+    padding-top: 5%;
+    padding-left: 1%;
+    padding-right: 1%;
+    display: flex;
+    flex-direction: column;
 }
 
 #seccion-izquierda {
     height: 100%;
-    width: 27.6%;
+    width: 28.6%;
     background-image: url('./assets/elementos_juego/fondo/izq.png');
-    background-size: contain;
-    background-repeat: no-repeat; 
+    background-size: cover;
+    background-repeat: round; 
     max-width: 315px;
     margin-right: -0.5%;
 }
 
 #seccion-centro{
-    width: 49.1%;
+    width: 50.1%;
     height: 100%;
     background-image: url('./assets/elementos_juego/fondo/medi.png');
-    background-size: contain;
-    background-repeat: no-repeat; 
+    background-size: cover;
+    background-repeat: round; 
     max-width: 568px;
     margin-right: -0.5%;
 }
 
 #seccion-derecha {
-    width: 21.1%;
+    width: 22%;
     height: 100%;
     background-image: url('./assets/elementos_juego/fondo/der.png');
-    background-size: contain;
-    background-repeat: no-repeat;    
+    background-size: cover;
+    background-repeat: round;    
     max-width: 295px;
 }
 
 #seccion-medio {
-    margin-top: 19.1%;
-    padding-top: 95%; 
+    background-color: rgb(211, 45, 45, 0.5);
     display: table;
     width: 100%;
+    height: 70%;
+    margin-top: 28%;
     border-collapse: collapse;
 }
 
-.mx{
-    margin-right: 10%;
-    margin-left: 10%;
-}
-
-#puntuacion h1{
-    font-family: Mario World Pixel Colors;
-    font-size: 2.5em;
-    margin-top: 25%;
-
-}
-
-#puntuacion h3{
-    font-family: Mario World;
-    font-size: 1.5em;
-    margin-top: 5%;
-
-}
-
-#turno {
+#dificultad{
     color: #E2BC38;
 }
 
+#puntuacion h3{
+    font-family: Mario World Outlined;
+    font-size: 1.5em;
+    margin-top: 3%;
+}
 
+#inicio {
+    background-image: url('./assets/elementos_juego/fondo/1.png');
+    width: 100%;
+    height: 100vh;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    overflow: hidden;
+    display: flex;
+}
+
+#title{
+    font-family: Mario World Pixel Colors;
+    font-size: 4em;
+    margin-top: 5%;
+    margin-left: 5%;
+    position: absolute;
+}
+
+#titleshadow{
+    font-family: Mario World;
+    font-size: 4em;
+    margin-top: 3.5%;
+    margin-left: 5%;
+    color: black;
+    position: absolute;
+}
+
+#options{
+    font-family: Mario World Outlined;
+    font-size: 1.5em;
+    color: black;
+    width: 10%;
+    top: 50%;
+    transform: translateY(40%);
+}
+
+#options button{
+    margin: 5px;
+}
+
+#options button:hover{
+    background-color: #E2BC38;
+}
+
+#exit{
+    font-family: Mario World Outlined;
+    position: relative;
+    background-color: rgb(211, 45, 45);
+    cursor: pointer;
+    margin-top: 15%;
+    width: min-content;
+    align-self: center;
+}
+
+#exit:hover{
+    background-color: rgb(255, 0, 0);
+}
+
+#verde{
+    color: #68f800;
+}
+
+#rojo{
+    color: #e62003;
+}
+
+@media (min-width: 1600px){
+    #mapa {
+        max-width: 1000px;
+    }
+}
 
 @media (max-width: 600px) {
     #contenedor {
@@ -104,10 +175,27 @@
     }
 
     #mapa {
-        min-height: auto;
+        min-height: fit-content;
+        flex: 2;
     }
 
-    #mapa, #puntuacion {
-        flex: auto;
+    #puntuacion{
+        flex: 2;
+    }
+
+    #inicio{
+        background-size: auto 100%;
+    }
+
+    #title{
+        font-size: 2em;
+        margin-top: 10%;
+        margin-left: 10%;
+    }
+
+    #titleshadow{
+        font-size: 2em;
+        margin-top: 8.5%;
+        margin-left: 10%;
     }
 }
