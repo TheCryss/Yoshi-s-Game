@@ -148,10 +148,10 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
                         else {
                             switch (nodoActual.getTipo()) {
                                 case "MAX":
-                                    cola.enqueue(new Nodo(nodoActual, mov, nodoActual.pos_PJ, profundidad, 0, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), -Infinity, nodoActual.p_Jugador, puntuacion))
+                                    cola.enqueue(new Nodo(nodoActual, mov, nodoActual.pos_PJ, profundidad, 0, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), Infinity, nodoActual.p_Jugador, puntuacion))
                                     break;
                                 case "MIN":
-                                    cola.enqueue(new Nodo(nodoActual, mov, nodoActual.pos_IA, profundidad, 0, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), Infinity, puntuacion, nodoActual.p_IA))
+                                    cola.enqueue(new Nodo(nodoActual, mov, nodoActual.pos_IA, profundidad, 0, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), -Infinity, puntuacion, nodoActual.p_IA))
                                     break;
                             }
                         }
@@ -160,15 +160,17 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
 
 
 
-                    // console.log("-------------------");
                 }
 
             }
+            // console.log("-------------------");
+
             while (!cola.isEmpty()) {
                 let nodo = cola.dequeue()
-                console.log(nodo);
                 if (nodo) {
                     pila.push(nodo);
+                    // console.log(nodo);
+
                 }
             }
 
@@ -176,42 +178,72 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
 
 
         function calcularUtilidad() {
-            let maxUtilidad = -Infinity;
+            // let maxUtilidad = -Infinity;
             while (!pila.isEmpty()) {
                 let nodo = pila.pop();
-                let nodoPadre = nodo?.getPadre();
-                pila.add(nodoPadre as Nodo);
                 if (nodo) {
-                    maxUtilidad = Math.max(maxUtilidad, nodo.getUtilidad());
                     // console.log(nodo);
+                    let nodoPadre = nodo?.getPadre();
+                    if (nodoPadre) {
+                        switch (nodoPadre.getTipo()) {
+                            case "MAX":
 
-                }
-                if (nodoPadre && nodo) {
-                    if (nodoPadre?.getTipo() == "MAX") {
-                        if (nodoPadre.getUtilidad() < nodo.getUtilidad()) {
-                            if (nodoPadre.getProfundidad() == 0) {
-                                nodoPadre.setMejorMov(nodo.getPosicion("MAX"));
-                            }
-                            nodoPadre.setUtilidad(nodo.getUtilidad());
+                                if (nodoPadre.getUtilidad() < nodo.getUtilidad()) {
+                                    // console.log("MAX")
 
-                        } else if (nodoPadre.getUtilidad() == nodo.getUtilidad()) {
-                            // If utilities are equal, choose randomly
-                            if (Math.random() < 0.5) {
-                                if (nodoPadre.getProfundidad() == 0) {
+                                    nodoPadre.setUtilidad(nodo.getUtilidad());
                                     nodoPadre.setMejorMov(nodo.getPosicion("MAX"));
-                                }
-                                nodoPadre.setUtilidad(nodo.getUtilidad());
-                            }
-                        }
+                                    // console.log(nodoPadre);
 
-                    } else {
-                        if (nodoPadre.getUtilidad() > nodo.getUtilidad()) {
-                            nodoPadre.setUtilidad(nodo.getUtilidad());
+                                }
+                                break;
+                            case "MIN":
+                                if (nodoPadre.getUtilidad() > nodo.getUtilidad()) {
+                                    nodoPadre.setUtilidad(nodo.getUtilidad());
+                                    nodoPadre.setMejorMov(nodo.getPosicion("MIN"));
+                                    // console.log(nodoPadre);
+
+                                }
+                                break;
                         }
-                    }
+                        pila.add(nodoPadre);
+                    } 
+
                 }
+                // if (nodo) {
+                //     maxUtilidad = Math.max(maxUtilidad, nodo.getUtilidad());
+                //     // console.log(nodo);
+
+                // }
+                // if (nodoPadre && nodo) {
+                //     if (nodoPadre?.getTipo() == "MAX") {
+                //         if (nodoPadre.getUtilidad() < nodo.getUtilidad()) {
+                //             if (nodoPadre.getProfundidad() == 0) {
+                //                 nodoPadre.setMejorMov(nodo.getPosicion("MAX"));
+                //             }
+                //             nodoPadre.setUtilidad(nodo.getUtilidad());
+
+                //         } else if (nodoPadre.getUtilidad() == nodo.getUtilidad()) {
+                //             // If utilities are equal, choose randomly
+                //             if (Math.random() < 0.5) {
+                //                 if (nodoPadre.getProfundidad() == 0) {
+                //                     nodoPadre.setMejorMov(nodo.getPosicion("MAX"));
+                //                 }
+                //                 nodoPadre.setUtilidad(nodo.getUtilidad());
+                //             }
+                //         }
+
+                //     } else {
+                //         if (nodoPadre.getUtilidad() > nodo.getUtilidad()) {
+                //             nodoPadre.setUtilidad(nodo.getUtilidad());
+                //         }
+                //     }
+                // }
             }
-            console.log(maxUtilidad);
+            console.log("-------------------");
+            // console.log(NodoRaiz);
+
+            // console.log(maxUtilidad);
 
         }
         calcularUtilidad();
