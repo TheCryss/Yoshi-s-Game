@@ -85,7 +85,7 @@ function turnoIA(matriz: matrix, p_monedas_normales: coordinates, p_monedas_espe
       console.log('Gano VERDE');
     } else if(puntos_verde < puntos_rojo){
       console.log('Gano ROJO');
-    }
+    } else console.log('EMPATE');
     return;
   } else {
     const mejor_jugada = minimax(matriz, p_monedas_normales, p_monedas_especiales, p_jugadores, dificultad);
@@ -101,7 +101,7 @@ function turnoHumano(matriz: matrix, p_monedas_normales: coordinates, p_monedas_
       console.log('Gano VERDE');
     } else if(puntos_verde < puntos_rojo){
       console.log('Gano ROJO');
-    }
+    } else console.log('EMPATE');
     return;
   } else {
     const movimientos = posiblesMovientos(p_jugadores[0], matriz);

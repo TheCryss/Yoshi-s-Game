@@ -65,7 +65,9 @@ function juego_terminado(p_monedas_normales: coordinates, p_monedas_especiales: 
 }
 
 export function ganador(n_puntosIA: number, n_puntosJugador: number): number {
-    return (n_puntosIA > n_puntosJugador) ? 3 : 4;
+    if(n_puntosIA > n_puntosJugador) return 3;
+    else if(n_puntosIA < n_puntosJugador) return 4;
+    else return 0;
 }
 
 export function obtenerDificultad(dificultad:string): number {
@@ -91,11 +93,10 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
         while (profundidad < dificultad) {
             if(juego_terminado(p_monedas, p_monedas_especiales)) {
                 let utilidad;
-                if(ganador(NodoRaiz.p_IA, NodoRaiz.p_Jugador) == 3) {
-                    utilidad = 1000;
-                } else {
-                    utilidad = -1000;
-                }
+                let fin = ganador(NodoRaiz.p_IA, NodoRaiz.p_Jugador) 
+                if(fin == 3) utilidad = 1000;
+                else if (fin == 4) utilidad = -1000;
+                else utilidad = 0;
 
                 NodoRaiz.setUtilidad(utilidad);
                 break;
