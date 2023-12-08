@@ -87,6 +87,7 @@ function eliminarMoneda(pos: coordinate, p_monedas: coordinates): coordinates {
 }
 
 export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especiales: coordinates, p_jugadores: coordinates, dificultad_juego: string = "Facil") {
+
     function crearArbol() {
         let NodoRaiz = new Nodo(null, p_jugadores[1], p_jugadores[0], 0, 0, p_monedas, p_monedas_especiales, "MAX", -Infinity, 0);
         let pila = new Collections.Stack<Nodo>();
@@ -95,17 +96,17 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
         pila.push(NodoRaiz);
         let dificultad = obtenerDificultad(dificultad_juego);
         while (profundidad < dificultad) {
-            if (juego_terminado(p_monedas, p_monedas_especiales)) {
-                let utilidad;
-                if (ganador(NodoRaiz.p_IA, NodoRaiz.p_Jugador) == 3) {
-                    utilidad = 1000;
-                } else {
-                    utilidad = -1000;
-                }
+            // if (juego_terminado(p_monedas, p_monedas_especiales)) {
+            //     let utilidad;
+            //     if (ganador(NodoRaiz.p_IA, NodoRaiz.p_Jugador) == 3) {
+            //         utilidad = 1000;
+            //     } else {
+            //         utilidad = -1000;
+            //     }
 
-                NodoRaiz.setUtilidad(utilidad);
-                break;
-            }
+            //     NodoRaiz.setUtilidad(utilidad);
+            //     break;
+            // }
             profundidad++
             while (!pila.isEmpty()) {
                 let nodoActual = pila.pop()
@@ -142,7 +143,6 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
                                     let utilidad2 = heuristica(nodoActual.p_IA, nodoActual.p_Jugador + puntuacion, posiblesMovientos(mov, matrix), new_p_monedas_esp, new_p_monedas)
                                     cola.enqueue(new Nodo(nodoActual, mov, nodoActual.pos_IA, profundidad, utilidad2, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), utilidad2, puntuacion, nodoActual.p_IA))
                                     break;
-
                             }
                         }
                         else {
@@ -153,22 +153,27 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
                                 case "MIN":
                                     cola.enqueue(new Nodo(nodoActual, mov, nodoActual.pos_IA, profundidad, 0, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), Infinity, puntuacion, nodoActual.p_IA))
                                     break;
-
                             }
                         }
-
-
                     }
 
-                    while (!cola.isEmpty()) {
-                        let nodo = cola.dequeue()
-                        // console.log(nodo);
-                        pila.push(nodo as Nodo)
-                    }
+
+
+
                     // console.log("-------------------");
                 }
+
             }
+            while (!cola.isEmpty()) {
+                let nodo = cola.dequeue()
+                console.log(nodo);
+                if (nodo) {
+                    pila.push(nodo);
+                }
+            }
+
         }
+
 
         function calcularUtilidad() {
             let maxUtilidad = -Infinity;
