@@ -14,7 +14,7 @@ export function posiblesMovientos(pos: coordinate, matriz: matrix): coordinates 
     let mov: coordinates = [];
     mov.push(...mov1, ...mov2, ...mov3, ...mov4)
     mov = mov.filter(pos => {
-        if (pos[0] >= 0 && pos[0] <= 7 && pos[1] >= 0 && pos[1] <= 7){
+        if (pos[0] >= 0 && pos[0] <= 7 && pos[1] >= 0 && pos[1] <= 7) {
             return (matriz[pos[0]][pos[1]] == 1 || matriz[pos[0]][pos[1]] == 0 || matriz[pos[0]][pos[1]] == 2)
         }
     })
@@ -22,7 +22,7 @@ export function posiblesMovientos(pos: coordinate, matriz: matrix): coordinates 
     return mov
 }
 
-export function utilidadMovimiento(movimiento: coordinate, p_monedas: coordinates, p_monedas_especiales: coordinates): number {
+export function puntuacionMovimiento(movimiento: coordinate, p_monedas: coordinates, p_monedas_especiales: coordinates): number {
     for (let i = 0; i < p_monedas_especiales.length; i++) {
         if (movimiento[0] === p_monedas_especiales[i][0] && movimiento[1] === p_monedas_especiales[i][1]) {
             return 3;
@@ -38,8 +38,26 @@ export function utilidadMovimiento(movimiento: coordinate, p_monedas: coordinate
     return 0;
 }
 
-export function heuristica(n_puntosIA: number, n_puntosJugador: number): number {
-    return n_puntosIA - n_puntosJugador;
+export function heuristica(n_puntosIA: number, n_puntosJugador: number, movimientos: coordinates, p_monedas_especiales: coordinates, p_monedas: coordinates): number {
+    let posiblesMonedas = 0
+
+    for (let j = 0; j < movimientos.length; j++) {
+        for (let i = 0; i < p_monedas_especiales.length; i++) {
+            if (movimientos[j][0] === p_monedas_especiales[i][0] && movimientos[j][1] === p_monedas_especiales[i][1]) {
+                posiblesMonedas++;
+            }
+        }
+    }
+
+    for (let j = 0; j < movimientos.length; j++) {
+        for (let i = 0; i < p_monedas.length; i++) {
+            if (movimientos[j][0] === p_monedas[i][0] && movimientos[j][1] === p_monedas[i][1]) {
+                posiblesMonedas++;
+            }
+        }
+    }
+
+    return n_puntosIA - n_puntosJugador + posiblesMonedas;
 }
 
 function juego_terminado(p_monedas_normales: coordinates, p_monedas_especiales: coordinates) {
@@ -50,8 +68,8 @@ export function ganador(n_puntosIA: number, n_puntosJugador: number): number {
     return (n_puntosIA > n_puntosJugador) ? 3 : 4;
 }
 
-export function obtenerDificultad(dificultad:string): number {
-    switch(dificultad) {
+export function obtenerDificultad(dificultad: string): number {
+    switch (dificultad) {
         case "Facil":
             return 2;
         case "Intermedio":
@@ -62,18 +80,24 @@ export function obtenerDificultad(dificultad:string): number {
     return 0;
 }
 
+function eliminarMoneda(pos: coordinate, p_monedas: coordinates): coordinates {
+    return p_monedas.filter((moneda) => {
+        return !(moneda[0] === pos[0] && moneda[1] === pos[1]);
+    })
+}
+
 export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especiales: coordinates, p_jugadores: coordinates, dificultad_juego: string = "Facil") {
     function crearArbol() {
-        let NodoRaiz = new Nodo(null, p_jugadores, 0, 0, p_monedas, p_monedas_especiales, "MAX", -Infinity, 0);
+        let NodoRaiz = new Nodo(null, p_jugadores[1], p_jugadores[0], 0, 0, p_monedas, p_monedas_especiales, "MAX", -Infinity, 0);
         let pila = new Collections.Stack<Nodo>();
         let cola = new Collections.Queue<Nodo>();
         let profundidad = 0;
         pila.push(NodoRaiz);
         let dificultad = obtenerDificultad(dificultad_juego);
         while (profundidad < dificultad) {
-            if(juego_terminado(p_monedas, p_monedas_especiales)) {
+            if (juego_terminado(p_monedas, p_monedas_especiales)) {
                 let utilidad;
-                if(ganador(NodoRaiz.p_IA, NodoRaiz.p_Jugador) == 3) {
+                if (ganador(NodoRaiz.p_IA, NodoRaiz.p_Jugador) == 3) {
                     utilidad = 1000;
                 } else {
                     utilidad = -1000;
@@ -85,38 +109,65 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
             profundidad++
             while (!pila.isEmpty()) {
                 let nodoActual = pila.pop()
-                if (nodoActual?.tipo == "MAX") {
-                    let movimientos = posiblesMovientos(nodoActual.getPosicion("MAX"), matrix)
-                    for (let movimiento of movimientos) {
-                        let puntuacion = utilidadMovimiento(movimiento, p_monedas, p_monedas_especiales) + (nodoActual.padre?.p_IA ?? 0)
-                        if (profundidad == dificultad) {
-                            let utilidad = heuristica(nodoActual.p_IA + puntuacion, nodoActual.p_Jugador)
-                            cola.enqueue(new Nodo(nodoActual, [nodoActual.getPosicion("MIN"), movimiento], profundidad, 0, p_monedas, p_monedas_especiales, "MIN", utilidad, nodoActual.p_Jugador, puntuacion))
-                        } else {
-                            cola.enqueue(new Nodo(nodoActual, [nodoActual.getPosicion("MIN"), movimiento], profundidad, 0, p_monedas, p_monedas_especiales, "MIN", Infinity, nodoActual.p_Jugador, puntuacion))
+                if (nodoActual) {
+                    let pos_monedas = nodoActual.getPosicionesMonedas();
+                    let pos_monedas_especiales = nodoActual.getPosicionesMonedasEspeciales();
+                    let movs = posiblesMovientos(nodoActual.getPosicion(nodoActual.getTipo()), matrix)
+                    for (let mov of movs) {
+                        let p_mov = puntuacionMovimiento(mov, pos_monedas, pos_monedas_especiales)
+                        let new_p_monedas: coordinates
+                        let new_p_monedas_esp: coordinates
+                        switch (p_mov) {
+                            case 1:
+                                new_p_monedas = eliminarMoneda(mov, pos_monedas)
+                                new_p_monedas_esp = pos_monedas_especiales
+                                break;
+                            case 3:
+                                new_p_monedas_esp = eliminarMoneda(mov, pos_monedas_especiales)
+                                new_p_monedas = pos_monedas
+                                break;
+                            default:
+                                new_p_monedas = pos_monedas
+                                new_p_monedas_esp = pos_monedas_especiales
+                                break;
                         }
-                    }
-                } else if (nodoActual?.tipo == "MIN") {
-                    let movimientos = posiblesMovientos(nodoActual?.getPosicion("MIN"), matrix)
-                    for (let movimiento of movimientos) {
-                        let puntuacion = utilidadMovimiento(movimiento, p_monedas, p_monedas_especiales) + (nodoActual.padre?.p_Jugador ?? 0)
+                        let puntuacion = p_mov + (nodoActual.padre?.getPuntuacion(nodoActual.getTipo()) ?? 0)
                         if (profundidad == dificultad) {
-                            let utilidad = heuristica(nodoActual.p_IA, nodoActual.p_Jugador + puntuacion)
-                            cola.enqueue(new Nodo(nodoActual, [movimiento, nodoActual.getPosicion("MAX")], profundidad, 0, p_monedas, p_monedas_especiales, "MAX", utilidad, puntuacion, nodoActual.p_IA))
-                        } else {
-                            cola.enqueue(new Nodo(nodoActual, [movimiento, nodoActual.getPosicion("MAX")], profundidad, 0, p_monedas, p_monedas_especiales, "MAX", -Infinity, puntuacion, nodoActual.p_IA))
+                            switch (nodoActual.getTipo()) {
+                                case "MAX":
+                                    let utilidad = heuristica(nodoActual.p_IA + puntuacion, nodoActual.p_Jugador, posiblesMovientos(mov, matrix), new_p_monedas_esp, new_p_monedas)
+                                    cola.enqueue(new Nodo(nodoActual, mov, nodoActual.pos_PJ, profundidad, utilidad, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), utilidad, nodoActual.p_Jugador, puntuacion))
+                                    break;
+                                case "MIN":
+                                    let utilidad2 = heuristica(nodoActual.p_IA, nodoActual.p_Jugador + puntuacion, posiblesMovientos(mov, matrix), new_p_monedas_esp, new_p_monedas)
+                                    cola.enqueue(new Nodo(nodoActual, mov, nodoActual.pos_IA, profundidad, utilidad2, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), utilidad2, puntuacion, nodoActual.p_IA))
+                                    break;
+
+                            }
                         }
+                        else {
+                            switch (nodoActual.getTipo()) {
+                                case "MAX":
+                                    cola.enqueue(new Nodo(nodoActual, mov, nodoActual.pos_PJ, profundidad, 0, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), -Infinity, nodoActual.p_Jugador, puntuacion))
+                                    break;
+                                case "MIN":
+                                    cola.enqueue(new Nodo(nodoActual, mov, nodoActual.pos_IA, profundidad, 0, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), Infinity, puntuacion, nodoActual.p_IA))
+                                    break;
+
+                            }
+                        }
+
+
                     }
+
+                    while (!cola.isEmpty()) {
+                        let nodo = cola.dequeue()
+                        // console.log(nodo);
+                        pila.push(nodo as Nodo)
+                    }
+                    // console.log("-------------------");
                 }
             }
-
-            while (!cola.isEmpty()) {
-                let nodo = cola.dequeue()
-                // console.log(nodo);
-                pila.push(nodo as Nodo)
-            }
-            // console.log("-------------------");
-            
         }
 
         function calcularUtilidad() {
@@ -128,7 +179,7 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
                 if (nodo) {
                     maxUtilidad = Math.max(maxUtilidad, nodo.getUtilidad());
                     // console.log(nodo);
-                    
+
                 }
                 if (nodoPadre && nodo) {
                     if (nodoPadre?.getTipo() == "MAX") {
@@ -156,13 +207,12 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
                 }
             }
             console.log(maxUtilidad);
-            
+
         }
         calcularUtilidad();
-        
+
         return NodoRaiz.mejor_mov;
     }
     let best_mov = crearArbol();
     return best_mov;
-
 }

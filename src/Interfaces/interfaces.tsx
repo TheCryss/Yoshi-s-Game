@@ -1,6 +1,7 @@
 export interface Nodo{
     padre: Nodo | null;
-    posicion: coordinates;
+    pos_IA: coordinate;
+    pos_PJ: coordinate;
     profundidad: number;
     heuristica: number;
     posiciones_monedas: coordinates;
