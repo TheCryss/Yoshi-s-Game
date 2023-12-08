@@ -109,18 +109,27 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
                     }
                 }
             }
+
             while (!cola.isEmpty()) {
                 let nodo = cola.dequeue()
+                // console.log(nodo);
                 pila.push(nodo as Nodo)
             }
+            // console.log("-------------------");
+            
         }
 
         function calcularUtilidad() {
+            let maxUtilidad = -Infinity;
             while (!pila.isEmpty()) {
                 let nodo = pila.pop();
                 let nodoPadre = nodo?.getPadre();
                 pila.add(nodoPadre as Nodo);
-
+                if (nodo) {
+                    maxUtilidad = Math.max(maxUtilidad, nodo.getUtilidad());
+                    // console.log(nodo);
+                    
+                }
                 if (nodoPadre && nodo) {
                     if (nodoPadre?.getTipo() == "MAX") {
                         if (nodoPadre.getUtilidad() < nodo.getUtilidad()) {
@@ -129,17 +138,28 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
                             }
                             nodoPadre.setUtilidad(nodo.getUtilidad());
 
+                        } else if (nodoPadre.getUtilidad() == nodo.getUtilidad()) {
+                            // If utilities are equal, choose randomly
+                            if (Math.random() < 0.5) {
+                                if (nodoPadre.getProfundidad() == 0) {
+                                    nodoPadre.setMejorMov(nodo.getPosicion("MAX"));
+                                }
+                                nodoPadre.setUtilidad(nodo.getUtilidad());
+                            }
                         }
+
                     } else {
                         if (nodoPadre.getUtilidad() > nodo.getUtilidad()) {
                             nodoPadre.setUtilidad(nodo.getUtilidad());
                         }
                     }
                 }
-
             }
+            console.log(maxUtilidad);
+            
         }
         calcularUtilidad();
+        
         return NodoRaiz.mejor_mov;
     }
     let best_mov = crearArbol();
