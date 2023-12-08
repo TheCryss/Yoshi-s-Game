@@ -38,8 +38,26 @@ export function utilidadMovimiento(movimiento: coordinate, p_monedas: coordinate
     return 0;
 }
 
-export function heuristica(n_puntosIA: number, n_puntosJugador: number): number {
-    return n_puntosIA - n_puntosJugador;
+export function heuristica(n_puntosIA: number, n_puntosJugador: number, movimientos:coordinates, p_monedas_especiales:coordinates, p_monedas: coordinates): number {
+    let posiblesMonedas = 0
+    
+    for(let j=0; j < movimientos.length; j++) {
+        for (let i = 0; i < p_monedas_especiales.length; i++) {
+            if (movimientos[j][0] === p_monedas_especiales[i][0] && movimientos[j][1] === p_monedas_especiales[i][1]) {
+                posiblesMonedas++;
+            }
+        }
+    }
+
+    for(let j=0; j < movimientos.length; j++) {
+        for (let i = 0; i < p_monedas.length; i++) {
+            if (movimientos[j][0] === p_monedas[i][0] && movimientos[j][1] === p_monedas[i][1]) {
+                posiblesMonedas++;
+            }
+        }
+    }
+
+    return n_puntosIA - n_puntosJugador + posiblesMonedas;
 }
 
 function juego_terminado(p_monedas_normales: coordinates, p_monedas_especiales: coordinates) {
@@ -90,7 +108,7 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
                     for (let movimiento of movimientos) {
                         let puntuacion = utilidadMovimiento(movimiento, p_monedas, p_monedas_especiales) + (nodoActual.padre?.p_IA ?? 0)
                         if (profundidad == dificultad) {
-                            let utilidad = heuristica(nodoActual.p_IA + puntuacion, nodoActual.p_Jugador)
+                            let utilidad = heuristica(nodoActual.p_IA + puntuacion, nodoActual.p_Jugador, movimientos, p_monedas_especiales, p_monedas)
                             cola.enqueue(new Nodo(nodoActual, [nodoActual.getPosicion("MIN"), movimiento], profundidad, 0, p_monedas, p_monedas_especiales, "MIN", utilidad, nodoActual.p_Jugador, puntuacion))
                         } else {
                             cola.enqueue(new Nodo(nodoActual, [nodoActual.getPosicion("MIN"), movimiento], profundidad, 0, p_monedas, p_monedas_especiales, "MIN", Infinity, nodoActual.p_Jugador, puntuacion))
@@ -101,7 +119,7 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
                     for (let movimiento of movimientos) {
                         let puntuacion = utilidadMovimiento(movimiento, p_monedas, p_monedas_especiales) + (nodoActual.padre?.p_Jugador ?? 0)
                         if (profundidad == dificultad) {
-                            let utilidad = heuristica(nodoActual.p_IA, nodoActual.p_Jugador + puntuacion)
+                            let utilidad = heuristica(nodoActual.p_IA, nodoActual.p_Jugador + puntuacion, movimientos, p_monedas_especiales, p_monedas)
                             cola.enqueue(new Nodo(nodoActual, [movimiento, nodoActual.getPosicion("MAX")], profundidad, 0, p_monedas, p_monedas_especiales, "MAX", utilidad, puntuacion, nodoActual.p_IA))
                         } else {
                             cola.enqueue(new Nodo(nodoActual, [movimiento, nodoActual.getPosicion("MAX")], profundidad, 0, p_monedas, p_monedas_especiales, "MAX", -Infinity, puntuacion, nodoActual.p_IA))
