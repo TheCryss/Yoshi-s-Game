@@ -57,7 +57,7 @@ export function heuristica(n_puntosIA: number, n_puntosJugador: number, movimien
         }
     }
 
-    return n_puntosIA - n_puntosJugador + posiblesMonedas;
+    return n_puntosIA - n_puntosJugador ;
 }
 
 function juego_terminado(p_monedas_normales: coordinates, p_monedas_especiales: coordinates) {
@@ -135,13 +135,10 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
                         let puntuacion = p_mov + (nodoActual.padre?.getPuntuacion(nodoActual.getTipo()) ?? 0)
                         if (profundidad == dificultad) {
                             switch (nodoActual.getTipo()) {
-                                case "MAX":
-                                    let utilidad = heuristica(nodoActual.p_IA + puntuacion, nodoActual.p_Jugador, posiblesMovientos(mov, matrix), new_p_monedas_esp, new_p_monedas)
-                                    cola.enqueue(new Nodo(nodoActual, mov, nodoActual.pos_PJ, profundidad, utilidad, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), utilidad, nodoActual.p_Jugador, puntuacion))
-                                    break;
+
                                 case "MIN":
                                     let utilidad2 = heuristica(nodoActual.p_IA, nodoActual.p_Jugador + puntuacion, posiblesMovientos(mov, matrix), new_p_monedas_esp, new_p_monedas)
-                                    cola.enqueue(new Nodo(nodoActual, mov, nodoActual.pos_IA, profundidad, utilidad2, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), utilidad2, puntuacion, nodoActual.p_IA))
+                                    cola.enqueue(new Nodo(nodoActual, nodoActual.pos_IA,mov, profundidad, utilidad2, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), utilidad2, puntuacion, nodoActual.p_IA))
                                     break;
                             }
                         }
@@ -151,7 +148,7 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
                                     cola.enqueue(new Nodo(nodoActual, mov, nodoActual.pos_PJ, profundidad, 0, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), Infinity, nodoActual.p_Jugador, puntuacion))
                                     break;
                                 case "MIN":
-                                    cola.enqueue(new Nodo(nodoActual, mov, nodoActual.pos_IA, profundidad, 0, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), -Infinity, puntuacion, nodoActual.p_IA))
+                                    cola.enqueue(new Nodo(nodoActual, nodoActual.pos_IA, mov, profundidad, 0, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), -Infinity, puntuacion, nodoActual.p_IA))
                                     break;
                             }
                         }
