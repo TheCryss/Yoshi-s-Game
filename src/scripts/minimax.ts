@@ -91,7 +91,7 @@ function eliminarMoneda(pos: coordinate, p_monedas: coordinates): coordinates {
 export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especiales: coordinates, p_jugadores: coordinates, dificultad_juego: string = "Facil") {
 
     function crearArbol() {
-        let NodoRaiz = new Nodo(null, p_jugadores[1], p_jugadores[0], 0, 0, p_monedas, p_monedas_especiales, "MAX", -Infinity, 0);
+        let NodoRaiz = new Nodo(null, p_jugadores[1], p_jugadores[0], 0, 0, p_monedas, p_monedas_especiales, "MAX", -Infinity, 0,0);
         let pila = new Collections.Stack<Nodo>();
         let cola = new Collections.Queue<Nodo>();
         let profundidad = 0;
@@ -170,21 +170,14 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
                     if (nodoActual) {
                         cola.enqueue(nodoActual);
                     }
-                    
                 }
-
             }
-            // console.log("-------------------");
-
             while (!cola.isEmpty()) {
                 let nodo = cola.dequeue()
                 if (nodo) {
                     pila.push(nodo);
-                    // console.log(nodo);
-
                 }
             }
-
         }
 
 
@@ -198,30 +191,25 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
                     if (nodoPadre) {
                         switch (nodoPadre.getTipo()) {
                             case "MAX":
-
                                 if (nodoPadre.getUtilidad() < nodo.getUtilidad()) {
-                                    // console.log("MAX")
-
                                     nodoPadre.setUtilidad(nodo.getUtilidad());
                                     nodoPadre.setMejorMov(nodo.pos_IA);
-                                    // console.log(nodoPadre);
-
+                                    nodoPadre.setPuntuacion(nodo.p_Jugador, nodo.getTipo());
+                                    nodoPadre.setHijo(nodo);
                                 }
                                 break;
                             case "MIN":
                                 if (nodoPadre.getUtilidad() > nodo.getUtilidad()) {
                                     nodoPadre.setUtilidad(nodo.getUtilidad());
-                                    nodoPadre.setMejorMov(nodo.pos_IA);
-                                    // console.log(nodoPadre);
-
+                                    nodoPadre.setMejorMov(nodo.pos_PJ);
+                                    nodoPadre.setPuntuacion(nodo.p_IA, nodo.getTipo());
+                                    nodoPadre.setHijo(nodo);
                                 }
                                 break;
                         }
                         pila.add(nodoPadre);
                     }
-                    console.log(nodo);
-                    
-
+                    // console.log(nodo);
                 }
 
             }
