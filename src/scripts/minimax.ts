@@ -57,7 +57,7 @@ export function heuristica(n_puntosIA: number, n_puntosJugador: number, movimien
         }
     }
 
-    return n_puntosIA - n_puntosJugador ;
+    return n_puntosIA - n_puntosJugador + posiblesMonedas;
 }
 
 function juego_terminado(p_monedas_normales: coordinates, p_monedas_especiales: coordinates) {
@@ -65,7 +65,9 @@ function juego_terminado(p_monedas_normales: coordinates, p_monedas_especiales: 
 }
 
 export function ganador(n_puntosIA: number, n_puntosJugador: number): number {
-    return (n_puntosIA > n_puntosJugador) ? 3 : 4;
+    if(n_puntosIA > n_puntosJugador) return 3;
+    else if(n_puntosIA < n_puntosJugador) return 4;
+    else return 0;
 }
 
 export function obtenerDificultad(dificultad: string): number {
@@ -133,13 +135,36 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
                                 break;
                         }
                         let puntuacion = p_mov + (nodoActual.padre?.getPuntuacion(nodoActual.getTipo()) ?? 0)
-                        if (profundidad == dificultad) {
-                            switch (nodoActual.getTipo()) {
+                        if (profundidad == dificultad || juego_terminado(new_p_monedas, new_p_monedas_esp)) {
+                            if (juego_terminado(new_p_monedas, new_p_monedas_esp)) {
+                                let utilidad;
+                                let ganador_ = ganador(nodoActual.p_IA, nodoActual.p_Jugador + puntuacion)
+                                if ( ganador_== 3) {
+                                    utilidad = 1000;
+                                } else if(ganador_ == 4) {
+                                    utilidad = -1000;
+                                } else {
+                                    utilidad = 0;
+                                }
 
-                                case "MIN":
-                                    let utilidad2 = heuristica(nodoActual.p_IA, nodoActual.p_Jugador + puntuacion, posiblesMovientos(mov, matrix), new_p_monedas_esp, new_p_monedas)
-                                    cola.enqueue(new Nodo(nodoActual, nodoActual.pos_IA,mov, profundidad, utilidad2, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), utilidad2, puntuacion, nodoActual.p_IA))
-                                    break;
+                                switch (nodoActual.getTipo()) {
+                                    case "MAX":
+                                        cola.enqueue(new Nodo(nodoActual, mov, nodoActual.pos_PJ, profundidad, utilidad, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), utilidad, nodoActual.p_Jugador, puntuacion))
+                                        break;
+                                    case "MIN":
+                                        cola.enqueue(new Nodo(nodoActual, nodoActual.pos_IA, mov, profundidad, utilidad, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), utilidad, puntuacion, nodoActual.p_IA))
+                                        break;
+                                }
+                                cola.enqueue(new Nodo(nodoActual, nodoActual.pos_IA, nodoActual.pos_PJ, profundidad, utilidad, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), utilidad, puntuacion, puntuacion))
+
+                            } else {
+                                switch (nodoActual.getTipo()) {
+
+                                    case "MIN":
+                                        let utilidad2 = heuristica(nodoActual.p_IA, nodoActual.p_Jugador + puntuacion, posiblesMovientos(nodoActual.getPosicion(nodoActual.getTipoContrario()), matrix), new_p_monedas_esp, new_p_monedas)
+                                        cola.enqueue(new Nodo(nodoActual, nodoActual.pos_IA, mov, profundidad, utilidad2, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), utilidad2, puntuacion, nodoActual.p_IA))
+                                        break;
+                                }
                             }
                         }
                         else {
@@ -189,7 +214,7 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
                                     // console.log("MAX")
 
                                     nodoPadre.setUtilidad(nodo.getUtilidad());
-                                    nodoPadre.setMejorMov(nodo.getPosicion("MAX"));
+                                    nodoPadre.setMejorMov(nodo.pos_IA);
                                     // console.log(nodoPadre);
 
                                 }
@@ -197,51 +222,20 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
                             case "MIN":
                                 if (nodoPadre.getUtilidad() > nodo.getUtilidad()) {
                                     nodoPadre.setUtilidad(nodo.getUtilidad());
-                                    nodoPadre.setMejorMov(nodo.getPosicion("MIN"));
+                                    nodoPadre.setMejorMov(nodo.pos_IA);
                                     // console.log(nodoPadre);
 
                                 }
                                 break;
                         }
                         pila.add(nodoPadre);
-                    } 
+                    }
 
                 }
-                // if (nodo) {
-                //     maxUtilidad = Math.max(maxUtilidad, nodo.getUtilidad());
-                //     // console.log(nodo);
 
-                // }
-                // if (nodoPadre && nodo) {
-                //     if (nodoPadre?.getTipo() == "MAX") {
-                //         if (nodoPadre.getUtilidad() < nodo.getUtilidad()) {
-                //             if (nodoPadre.getProfundidad() == 0) {
-                //                 nodoPadre.setMejorMov(nodo.getPosicion("MAX"));
-                //             }
-                //             nodoPadre.setUtilidad(nodo.getUtilidad());
-
-                //         } else if (nodoPadre.getUtilidad() == nodo.getUtilidad()) {
-                //             // If utilities are equal, choose randomly
-                //             if (Math.random() < 0.5) {
-                //                 if (nodoPadre.getProfundidad() == 0) {
-                //                     nodoPadre.setMejorMov(nodo.getPosicion("MAX"));
-                //                 }
-                //                 nodoPadre.setUtilidad(nodo.getUtilidad());
-                //             }
-                //         }
-
-                //     } else {
-                //         if (nodoPadre.getUtilidad() > nodo.getUtilidad()) {
-                //             nodoPadre.setUtilidad(nodo.getUtilidad());
-                //         }
-                //     }
-                // }
             }
             console.log("-------------------");
-            // console.log(NodoRaiz);
-
-            // console.log(maxUtilidad);
-
+            console.log(NodoRaiz);
         }
         calcularUtilidad();
 
