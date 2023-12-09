@@ -98,21 +98,10 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
         pila.push(NodoRaiz);
         let dificultad = obtenerDificultad(dificultad_juego);
         while (profundidad < dificultad) {
-            // if (juego_terminado(p_monedas, p_monedas_especiales)) {
-            //     let utilidad;
-            //     if (ganador(NodoRaiz.p_IA, NodoRaiz.p_Jugador) == 3) {
-            //         utilidad = 1000;
-            //     } else {
-            //         utilidad = -1000;
-            //     }
-
-            //     NodoRaiz.setUtilidad(utilidad);
-            //     break;
-            // }
             profundidad++
             while (!pila.isEmpty()) {
                 let nodoActual = pila.pop()
-                if (nodoActual) {
+                if (nodoActual && (nodoActual.getUtilidad() != 1000 && nodoActual.getUtilidad() != -1000 && nodoActual.getUtilidad() != 0)) {
                     let pos_monedas = nodoActual.getPosicionesMonedas();
                     let pos_monedas_especiales = nodoActual.getPosicionesMonedasEspeciales();
                     let movs = posiblesMovientos(nodoActual.getPosicion(nodoActual.getTipo()), matrix)
@@ -155,7 +144,6 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
                                         cola.enqueue(new Nodo(nodoActual, nodoActual.pos_IA, mov, profundidad, utilidad, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), utilidad, puntuacion, nodoActual.p_IA))
                                         break;
                                 }
-                                cola.enqueue(new Nodo(nodoActual, nodoActual.pos_IA, nodoActual.pos_PJ, profundidad, utilidad, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), utilidad, puntuacion, puntuacion))
 
                             } else {
                                 switch (nodoActual.getTipo()) {
@@ -178,10 +166,11 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
                             }
                         }
                     }
-
-
-
-
+                } else{
+                    if (nodoActual) {
+                        cola.enqueue(nodoActual);
+                    }
+                    
                 }
 
             }
@@ -230,6 +219,8 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
                         }
                         pila.add(nodoPadre);
                     }
+                    console.log(nodo);
+                    
 
                 }
 
