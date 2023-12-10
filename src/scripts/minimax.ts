@@ -111,6 +111,8 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
                         continue;
                     } else {
                         let movs = posiblesMovientos(nodo.getPosicion(nodo.getTipo()), matrix)
+                        //shuffle movs
+                        movs.sort(() => Math.random() - 0.5);
                         for (let mov of movs) {
                             indice++;
                             let p_mov = puntuacionMovimiento(mov, nodo.getPosicionesMonedas(), nodo.getPosicionesMonedasEspeciales())
