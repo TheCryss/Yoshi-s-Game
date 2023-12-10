@@ -1,11 +1,11 @@
 import { Nodo as NodoInterface, coordinate, coordinates} from "../Interfaces/interfaces";
 
 export class Nodo implements NodoInterface {
-    padre: Nodo | null;
+    padre: number | null;
+    indice: number;
     pos_IA: coordinate;
     pos_PJ: coordinate;
     profundidad: number;
-    heuristica: number;
     posiciones_monedas: coordinates;
     posiciones_monedas_especiales: coordinates;
     tipo: string;
@@ -14,12 +14,12 @@ export class Nodo implements NodoInterface {
     p_IA:number;
     mejor_mov: coordinate | null;
     hijo:Nodo | null;
-    constructor(padre:Nodo | null, pos_IA:coordinate,pos_PJ:coordinate, profundidad:number, heuristica:number, posiciones_monedas:coordinates,posiciones_monedas_especiales:coordinates, tipo:string, utilidad:number,p_Jugador:number = 0,p_IA:number =0) {
+    constructor(padre:number | null, indice: number ,pos_IA:coordinate,pos_PJ:coordinate, profundidad:number, posiciones_monedas:coordinates,posiciones_monedas_especiales:coordinates, tipo:string, utilidad:number,p_Jugador:number = 0,p_IA:number =0) {
         this.padre = padre;
+        this.indice = indice;
         this.pos_IA = pos_IA;
         this.pos_PJ = pos_PJ;
         this.profundidad = profundidad;
-        this.heuristica = heuristica;
         this.posiciones_monedas = posiciones_monedas;
         this.posiciones_monedas_especiales = posiciones_monedas_especiales;
         this.tipo = tipo;
@@ -38,8 +38,12 @@ export class Nodo implements NodoInterface {
         }
     }
 
-    getPadre(): Nodo | null {
+    getPadre(): number | null {
         return this.padre;
+    }
+
+    getIndice(): number {
+        return this.indice;
     }
 
     setMejorMov(movimiento: coordinate): void {
@@ -58,10 +62,6 @@ export class Nodo implements NodoInterface {
 
     getProfundidad(): number {
         return this.profundidad;
-    }
-
-    getHeuristica(): number {
-        return this.heuristica;
     }
 
     getPosicionesMonedas(): coordinates {

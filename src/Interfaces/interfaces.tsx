@@ -1,9 +1,9 @@
 export interface Nodo{
-    padre: Nodo | null;
+    padre: number | null;
+    indice: number;
     pos_IA: coordinate;
     pos_PJ: coordinate;
     profundidad: number;
-    heuristica: number;
     posiciones_monedas: coordinates;
     posiciones_monedas_especiales: coordinates;
     tipo: string;

@@ -65,8 +65,8 @@ function juego_terminado(p_monedas_normales: coordinates, p_monedas_especiales: 
 }
 
 export function ganador(n_puntosIA: number, n_puntosJugador: number): number {
-    if(n_puntosIA > n_puntosJugador) return 3;
-    else if(n_puntosIA < n_puntosJugador) return 4;
+    if (n_puntosIA > n_puntosJugador) return 3;
+    else if (n_puntosIA < n_puntosJugador) return 4;
     else return 0;
 }
 
@@ -89,137 +89,102 @@ function eliminarMoneda(pos: coordinate, p_monedas: coordinates): coordinates {
 }
 
 export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especiales: coordinates, p_jugadores: coordinates, dificultad_juego: string = "Facil") {
-
     function crearArbol() {
-        let NodoRaiz = new Nodo(null, p_jugadores[1], p_jugadores[0], 0, 0, p_monedas, p_monedas_especiales, "MAX", -Infinity, 0,0);
-        let pila = new Collections.Stack<Nodo>();
-        let cola = new Collections.Queue<Nodo>();
-        let profundidad = 0;
-        pila.push(NodoRaiz);
+        let NodoRaiz = new Nodo(null, 0, p_jugadores[1], p_jugadores[0], 0, p_monedas, p_monedas_especiales, "MAX", -Infinity, 0);
+
+        let vector: Nodo[] = [];
+        vector.push(NodoRaiz);
+
         let dificultad = obtenerDificultad(dificultad_juego);
+        let profundidad = 0;
+        let indice = 0;
+
         while (profundidad < dificultad) {
-            profundidad++
-            while (!pila.isEmpty()) {
-                let nodoActual = pila.pop()
-                if (nodoActual && (nodoActual.getUtilidad() != 1000 && nodoActual.getUtilidad() != -1000 && nodoActual.getUtilidad() != 0)) {
-                    let pos_monedas = nodoActual.getPosicionesMonedas();
-                    let pos_monedas_especiales = nodoActual.getPosicionesMonedasEspeciales();
-                    let movs = posiblesMovientos(nodoActual.getPosicion(nodoActual.getTipo()), matrix)
-                    for (let mov of movs) {
-                        let p_mov = puntuacionMovimiento(mov, pos_monedas, pos_monedas_especiales)
-                        let new_p_monedas: coordinates
-                        let new_p_monedas_esp: coordinates
-                        switch (p_mov) {
-                            case 1:
-                                new_p_monedas = eliminarMoneda(mov, pos_monedas)
-                                new_p_monedas_esp = pos_monedas_especiales
-                                break;
-                            case 3:
-                                new_p_monedas_esp = eliminarMoneda(mov, pos_monedas_especiales)
-                                new_p_monedas = pos_monedas
-                                break;
-                            default:
-                                new_p_monedas = pos_monedas
-                                new_p_monedas_esp = pos_monedas_especiales
-                                break;
-                        }
-                        let puntuacion = p_mov + (nodoActual.padre?.getPuntuacion(nodoActual.getTipo()) ?? 0)
-                        if (profundidad == dificultad || juego_terminado(new_p_monedas, new_p_monedas_esp)) {
-                            if (juego_terminado(new_p_monedas, new_p_monedas_esp)) {
-                                let utilidad;
-                                let ganador_ = ganador(nodoActual.p_IA, nodoActual.p_Jugador + puntuacion)
-                                if ( ganador_== 3) {
-                                    utilidad = 1000;
-                                } else if(ganador_ == 4) {
-                                    utilidad = -1000;
-                                } else {
-                                    utilidad = 0;
-                                }
+            profundidad++;
+            for (let nodo of vector) {
+                if (nodo.getProfundidad() == (profundidad - 1)) {
+                    if (juego_terminado(nodo.getPosicionesMonedas(), nodo.getPosicionesMonedasEspeciales())) {
+                        let ganador_ = ganador(nodo.p_IA, nodo.p_Jugador)
+                        if (ganador_ == 3) nodo.setUtilidad(1000);
+                        else if (ganador_ == 4) nodo.setUtilidad(-1000);
+                        else nodo.setUtilidad(0);
+                        continue;
+                    } else {
+                        let movs = posiblesMovientos(nodo.getPosicion(nodo.getTipo()), matrix)
+                        for (let mov of movs) {
+                            indice++;
+                            let p_mov = puntuacionMovimiento(mov, nodo.getPosicionesMonedas(), nodo.getPosicionesMonedasEspeciales())
+                            let new_p_monedas: coordinates
+                            let new_p_monedas_esp: coordinates
+                            switch (p_mov) {
+                                case 1:
+                                    new_p_monedas = eliminarMoneda(mov, nodo.getPosicionesMonedas())
+                                    new_p_monedas_esp = nodo.getPosicionesMonedasEspeciales()
+                                    break;
+                                case 3:
+                                    new_p_monedas_esp = eliminarMoneda(mov, nodo.getPosicionesMonedasEspeciales())
+                                    new_p_monedas = nodo.getPosicionesMonedas()
+                                    break;
+                                default:
+                                    new_p_monedas = nodo.getPosicionesMonedas()
+                                    new_p_monedas_esp = nodo.getPosicionesMonedasEspeciales()
+                                    break;
+                            }
 
-                                switch (nodoActual.getTipo()) {
-                                    case "MAX":
-                                        cola.enqueue(new Nodo(nodoActual, mov, nodoActual.pos_PJ, profundidad, utilidad, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), utilidad, nodoActual.p_Jugador, puntuacion))
-                                        break;
-                                    case "MIN":
-                                        cola.enqueue(new Nodo(nodoActual, nodoActual.pos_IA, mov, profundidad, utilidad, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), utilidad, puntuacion, nodoActual.p_IA))
-                                        break;
-                                }
+                            let tipo = (profundidad % 2 == 0) ? "MAX" : "MIN";
+                            let hijo: Nodo;
 
+                            if (tipo === "MIN") {
+                                hijo = new Nodo(nodo.indice, indice, mov, nodo.pos_PJ, profundidad, new_p_monedas, new_p_monedas_esp, tipo, Infinity, nodo.p_Jugador, nodo.p_IA + p_mov);
                             } else {
-                                switch (nodoActual.getTipo()) {
+                                hijo = new Nodo(nodo.indice, indice, nodo.pos_IA, mov, profundidad, new_p_monedas, new_p_monedas_esp, tipo, -Infinity, nodo.p_Jugador + p_mov, nodo.p_IA);
+                            }
 
-                                    case "MIN":
-                                        let utilidad2 = heuristica(nodoActual.p_IA, nodoActual.p_Jugador + puntuacion, posiblesMovientos(nodoActual.getPosicion(nodoActual.getTipoContrario()), matrix), new_p_monedas_esp, new_p_monedas)
-                                        cola.enqueue(new Nodo(nodoActual, nodoActual.pos_IA, mov, profundidad, utilidad2, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), utilidad2, puntuacion, nodoActual.p_IA))
-                                        break;
+                            if(hijo.getProfundidad() == dificultad){
+                                if(juego_terminado(hijo.getPosicionesMonedas(), hijo.getPosicionesMonedasEspeciales())){
+                                    let ganador_ = ganador(hijo.p_IA, hijo.p_Jugador)
+                                    if (ganador_ == 3) hijo.setUtilidad(1000);
+                                    else if (ganador_ == 4) hijo.setUtilidad(-1000);
+                                    else hijo.setUtilidad(0);
+                                } else {
+                                hijo.setUtilidad(heuristica(hijo.p_IA, hijo.p_Jugador, posiblesMovientos(hijo.getPosicion(hijo.getTipo()), matrix), hijo.getPosicionesMonedasEspeciales(), hijo.getPosicionesMonedas()))
                                 }
                             }
-                        }
-                        else {
-                            switch (nodoActual.getTipo()) {
-                                case "MAX":
-                                    cola.enqueue(new Nodo(nodoActual, mov, nodoActual.pos_PJ, profundidad, 0, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), Infinity, nodoActual.p_Jugador, puntuacion))
-                                    break;
-                                case "MIN":
-                                    cola.enqueue(new Nodo(nodoActual, nodoActual.pos_IA, mov, profundidad, 0, new_p_monedas, new_p_monedas_esp, nodoActual.getTipoContrario(), -Infinity, puntuacion, nodoActual.p_IA))
-                                    break;
-                            }
+
+                            vector.push(hijo);
                         }
                     }
-                } else{
-                    if (nodoActual) {
-                        cola.enqueue(nodoActual);
-                    }
-                }
-            }
-            while (!cola.isEmpty()) {
-                let nodo = cola.dequeue()
-                if (nodo) {
-                    pila.push(nodo);
                 }
             }
         }
-
-
-        function calcularUtilidad() {
-            // let maxUtilidad = -Infinity;
-            while (!pila.isEmpty()) {
-                let nodo = pila.pop();
-                if (nodo) {
-                    // console.log(nodo);
-                    let nodoPadre = nodo?.getPadre();
-                    if (nodoPadre) {
-                        switch (nodoPadre.getTipo()) {
-                            case "MAX":
-                                if (nodoPadre.getUtilidad() < nodo.getUtilidad()) {
-                                    nodoPadre.setUtilidad(nodo.getUtilidad());
-                                    nodoPadre.setMejorMov(nodo.pos_IA);
-                                    nodoPadre.setPuntuacion(nodo.p_Jugador, nodo.getTipo());
-                                    nodoPadre.setHijo(nodo);
-                                }
-                                break;
-                            case "MIN":
-                                if (nodoPadre.getUtilidad() > nodo.getUtilidad()) {
-                                    nodoPadre.setUtilidad(nodo.getUtilidad());
-                                    nodoPadre.setMejorMov(nodo.pos_PJ);
-                                    nodoPadre.setPuntuacion(nodo.p_IA, nodo.getTipo());
-                                    nodoPadre.setHijo(nodo);
-                                }
-                                break;
-                        }
-                        pila.add(nodoPadre);
-                    }
-                    // console.log(nodo);
-                }
-
-            }
-            console.log("-------------------");
-            console.log(NodoRaiz);
-        }
-        calcularUtilidad();
-
-        return NodoRaiz.mejor_mov;
+        return vector;
     }
-    let best_mov = crearArbol();
-    return best_mov;
+
+    function calcularUtilidad(nodos: Nodo[]) {
+        //Subiendo de utilidad
+        for (let longitud = nodos.length-1; longitud >= 0; longitud--) {
+            console.log("hola");
+            if(!nodos[longitud]?.getPadre()){
+                break;
+            }
+            else {
+                if(nodos[longitud].tipo == "MAX"){
+                    if(nodos[longitud].utilidad < nodos[nodos[longitud].padre ?? 0].utilidad){
+                        nodos[nodos[longitud].padre ?? 0].utilidad = nodos[longitud].utilidad;
+                        nodos[nodos[longitud].padre ?? 0].mejor_mov = nodos[longitud].getPosicion("MIN");
+                    }
+                } else {
+                    if(nodos[longitud].utilidad > nodos[nodos[longitud].padre ?? 0].utilidad){
+                        nodos[nodos[longitud].padre ?? 0].utilidad = nodos[longitud].utilidad;
+                        nodos[nodos[longitud].padre ?? 0].mejor_mov = nodos[longitud].getPosicion("MAX");
+                    }
+                }
+            }
+        }
+        console.log(nodos);
+        return nodos[0].mejor_mov;
+    }
+
+    let nodos: Nodo[] = crearArbol();
+    return calcularUtilidad(nodos);
 }
