@@ -88,7 +88,7 @@ function turnoIA(matriz: matrix, p_monedas_normales: coordinates, p_monedas_espe
     }
     return;
   } else {
-    const mejor_jugada = minimax(matriz, p_monedas_normales, p_monedas_especiales, p_jugadores, dificultad);
+    const mejor_jugada = minimax(matriz, p_monedas_normales, p_monedas_especiales, p_jugadores,puntos_rojo, puntos_verde,dificultad);
     if(mejor_jugada === null){ return; }
     actualizar_matriz(matriz, p_jugadores, p_monedas_normales, p_monedas_especiales, mejor_jugada, 3);
     turnoHumano(matriz, p_monedas_normales, p_monedas_especiales, p_jugadores, dificultad);
@@ -163,14 +163,14 @@ const Map: React.FC<MapaProps> = ({ difficulty }) => {
       }
     }
     let posicionesAleatorias = 0;
-    while (posicionesAleatorias < 2) {
-      // posicionJugadores = [[posicion yoshi rojo], [posicion yoshi verde]]]
-      const randomIndex = Math.floor(Math.random() * posicionesDisponibles.length);
-      const randomPosition = posicionesDisponibles[randomIndex];
-      posicionesAleatorias == 1 ? matriz_juego[randomPosition[0]][randomPosition[1]] = 3 : matriz_juego[randomPosition[0]][randomPosition[1]] = 4;
-      posicionesAleatorias++;
-      posicionJugadores.push(randomPosition);
-      posicionesDisponibles.splice(randomIndex, 1);
+     while (posicionesAleatorias < 2) {
+       // posicionJugadores = [[posicion yoshi rojo], [posicion yoshi verde]]]
+       const randomIndex = Math.floor(Math.random() * posicionesDisponibles.length);
+       const randomPosition = posicionesDisponibles[randomIndex];
+       posicionesAleatorias == 1 ? matriz_juego[randomPosition[0]][randomPosition[1]] = 3 : matriz_juego[randomPosition[0]][randomPosition[1]] = 4;
+       posicionesAleatorias++;
+       posicionJugadores.push(randomPosition);
+       posicionesDisponibles.splice(randomIndex, 1);
     }
     matrizYaFueCreada = true;
   }

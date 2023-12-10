@@ -44,7 +44,7 @@ export function heuristica(n_puntosIA: number, n_puntosJugador: number, movimien
     for (let j = 0; j < movimientos.length; j++) {
         for (let i = 0; i < p_monedas_especiales.length; i++) {
             if (movimientos[j][0] === p_monedas_especiales[i][0] && movimientos[j][1] === p_monedas_especiales[i][1]) {
-                posiblesMonedas++;
+                posiblesMonedas += 1;
             }
         }
     }
@@ -52,7 +52,7 @@ export function heuristica(n_puntosIA: number, n_puntosJugador: number, movimien
     for (let j = 0; j < movimientos.length; j++) {
         for (let i = 0; i < p_monedas.length; i++) {
             if (movimientos[j][0] === p_monedas[i][0] && movimientos[j][1] === p_monedas[i][1]) {
-                posiblesMonedas++;
+                posiblesMonedas += 0.5;
             }
         }
     }
@@ -88,9 +88,9 @@ function eliminarMoneda(pos: coordinate, p_monedas: coordinates): coordinates {
     })
 }
 
-export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especiales: coordinates, p_jugadores: coordinates, dificultad_juego: string = "Facil") {
+export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especiales: coordinates, p_jugadores: coordinates, puntos_rojo:number, puntos_verde:number, dificultad_juego: string = "Facil") {
     function crearArbol() {
-        let NodoRaiz = new Nodo(null, 0, p_jugadores[1], p_jugadores[0], 0, p_monedas, p_monedas_especiales, "MAX", -Infinity, 0);
+        let NodoRaiz = new Nodo(null, 0, p_jugadores[1], p_jugadores[0], 0, p_monedas, p_monedas_especiales, "MAX", -Infinity, puntos_rojo, puntos_verde);
 
         let vector: Nodo[] = [];
         vector.push(NodoRaiz);
@@ -163,8 +163,7 @@ export function minimax(matrix: matrix, p_monedas: coordinates, p_monedas_especi
     function calcularUtilidad(nodos: Nodo[]) {
         //Subiendo de utilidad
         for (let longitud = nodos.length-1; longitud >= 0; longitud--) {
-            console.log("hola");
-            if(!nodos[longitud]?.getPadre()){
+            if(nodos[longitud].getPadre() == null){
                 break;
             }
             else {
